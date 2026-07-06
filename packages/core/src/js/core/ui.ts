@@ -487,6 +487,15 @@ export default class UI {
       const inputPadding =
         selectedCountryWidth + LAYOUT.INPUT_PADDING_EXTRA_LEFT;
       this.telInputEl.style.paddingInlineStart = `${inputPadding}px`;
+      //* Publish the clearance width as a custom property so the RTL stylesheet can place it on
+      //* the physical RIGHT. Browsers resolve a tel input's own direction as LTR even inside an
+      //* RTL page, so the line above (logical inline-start) writes to the physical LEFT, whereas
+      //* the flag/country button in an RTL widget sits on the RIGHT. This is a measurement only —
+      //* the direction/side decision lives entirely in CSS (intlTelInput.css, scoped to :dir(rtl)).
+      this.telInputEl.style.setProperty(
+        "--iti-country-clearance",
+        `${inputPadding}px`,
+      );
     }
   }
 

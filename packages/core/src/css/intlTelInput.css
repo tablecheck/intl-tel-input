@@ -132,6 +132,32 @@
   direction: ltr;
 }
 
+/* Fork RTL layout: right-align the phone number so it sits next to the country button, which
+   holds the flag and the separate dial code on the inline-start (right) edge. The number and
+   dial code then read as one group hugging the flag ("51 234 5678 +966 🇦🇪"). Pure CSS,
+   scoped to :dir(rtl); the LTR layout is unchanged and the dial code keeps its single,
+   direction-agnostic position inside the country button (see ui.ts #buildCountryContainer).
+
+   Note: placing a *separate* dial-code element to the LEFT of the right-aligned number, in a
+   full-width field, is not expressible in pure CSS — it needs the number's pixel width (a JS
+   measurement) or a field that shrinks to its content. Keeping the dial code by the flag is
+   the full-width, pure-CSS layout. The scope is keyed off the wrapper's directionality (a
+   plain <div>, whose :dir resolves reliably) and reaches the input via a descendant selector,
+   so it does not depend on the <input>'s own :dir resolution. */
+.iti:dir(rtl) .iti__tel-input {
+  /* Right-align the number so it sits next to the country button. */
+  text-align: right;
+  /* The input's own direction resolves to LTR (browsers force it for tel/number-style inputs
+     even inside an RTL page), so its logical inline-start is the physical LEFT — where the
+     JS-set flag-clearance padding lands, and the WRONG side for an RTL widget whose country
+     button is on the right. Neutralise that padding and re-apply the clearance on the physical
+     RIGHT (the input's inline-end). The width comes from the --iti-country-clearance custom
+     property that ui.ts publishes (a measurement; the side is chosen here in CSS). !important
+     beats both the JS inline padding-inline-start and any consumer id-selector padding. */
+  padding-inline-start: var(--iti-spacer-horizontal) !important;
+  padding-inline-end: var(--iti-country-clearance, 0px) !important;
+}
+
 .iti__arrow {
   margin-inline-start: var(--iti-arrow-padding);
   margin-top: -2px;
